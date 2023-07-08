@@ -56,9 +56,9 @@ def parse_args():
         help="total timesteps of the experiments")
     parser.add_argument("--learning-rate", type=float, default=2.5e-4,
         help="the learning rate of the optimizer")
-    parser.add_argument("--num-envs", type=int, default=16,
+    parser.add_argument("--num-envs", type=int, default=4,
         help="the number of parallel game environments")
-    parser.add_argument("--num-steps", type=int, default=1024,
+    parser.add_argument("--num-steps", type=int, default=16,
         help="the number of steps to run in each environment per policy rollout")
     parser.add_argument("--anneal-lr", type=lambda x: bool(strtobool(x)), default=True, nargs="?", const=True,
         help="Toggle learning rate annealing for policy and value networks")
@@ -68,7 +68,7 @@ def parse_args():
         help="the discount factor gamma")
     parser.add_argument("--gae-lambda", type=float, default=0.98,
         help="the lambda for the general advantage estimation")
-    parser.add_argument("--num-minibatches", type=int, default=64,
+    parser.add_argument("--num-minibatches", type=int, default=4,
         help="the number of mini-batches")
     parser.add_argument("--update-epochs", type=int, default=4,
         help="the K epochs to update the policy")
@@ -88,7 +88,7 @@ def parse_args():
         help="the target KL divergence threshold")
 
     # Adding HuggingFace argument
-    parser.add_argument("--repo-id", type=str, default="ThomasSimonini/ppo-CartPole-v1", help="id of the model repository from the Hugging Face Hub {username/repo_name}")
+    parser.add_argument("--repo-id", type=str, default="RajkNakka/ppo-LunarLander-v2-unit-8", help="id of the model repository from the Hugging Face Hub {username/repo_name}")
 
     args = parser.parse_args()
     args.batch_size = int(args.num_envs * args.num_steps)
@@ -585,12 +585,12 @@ if __name__ == "__main__":
     writer.close()
 
     # Create the evaluation environment
-    # eval_env = gym.make(args.env_id)
+    eval_env = gym.make(args.env_id)
 
-    # package_to_hub(
-    #     repo_id=args.repo_id,
-    #     model=agent,  # The model we want to save
-    #     hyperparameters=args,
-    #     eval_env=gym.make(args.env_id),
-    #     logs=f"runs/{run_name}",
-    # )
+    package_to_hub(
+        repo_id=args.repo_id,
+        model=agent,  # The model we want to save
+        hyperparameters=args,
+        eval_env=gym.make(args.env_id),
+        logs=f"runs/{run_name}",
+    )
